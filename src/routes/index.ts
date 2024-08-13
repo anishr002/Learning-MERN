@@ -32,7 +32,12 @@ const coreRoutes = [
     component: FormLayout,
   },
   {
-    path: '/tables',
+    path: '/forms/form-layout/:id',
+    title: 'Form Layouts',
+    component: FormLayout,
+  },
+  {
+    path: '/users',
     title: 'Tables',
     component: Tables,
   },

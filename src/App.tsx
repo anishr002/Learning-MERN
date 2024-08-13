@@ -4,9 +4,14 @@ import { Toaster } from 'react-hot-toast';
 
 import ECommerce from './pages/Dashboard/ECommerce';
 import SignIn from './pages/Authentication/SignIn';
+import ForgotPassword from './pages/Authentication/ForgotPassword';
+
 import SignUp from './pages/Authentication/SignUp';
 import Loader from './common/Loader';
 import routes from './routes';
+import NotFound from './components/NotFound';
+import PrivateRoute from './auth/PrivateRoute';
+import PublicRoute from './auth/PublicRoute';
 
 const DefaultLayout = lazy(() => import('./layout/DefaultLayout'));
 
@@ -22,17 +27,22 @@ function App() {
   ) : (
     <>
       <Toaster
-        position="top-right"
+        position="top-center"
         reverseOrder={false}
         containerClassName="overflow-auto"
       />
       <Routes>
-        <Route path="/auth/signin" element={<SignIn />} />
-        <Route path="/auth/signup" element={<SignUp />} />
-        <Route element={<DefaultLayout />}>
+        {/* Public routes - accessible without authentication */}
+        <Route path="/auth/signin" element={<PublicRoute element={SignIn} />} />
+        <Route path="/auth/signup" element={<PublicRoute element={SignUp} />} />
+        <Route path="/auth/forgotpassword" element={<PublicRoute element={ForgotPassword} />} />
+
+
+        {/* Protected routes - accessible only with authentication */}
+        <Route element={<PrivateRoute element={DefaultLayout} />}>
           <Route index element={<ECommerce />} />
-          {routes.map((routes, index) => {
-            const { path, component: Component } = routes;
+          {routes.map((route, index) => {
+            const { path, component: Component } = route;
             return (
               <Route
                 key={index}
@@ -45,6 +55,7 @@ function App() {
               />
             );
           })}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </>

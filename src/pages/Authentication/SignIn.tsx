@@ -1,8 +1,40 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LogoDark from '../../images/logo/logo-dark.svg';
 import Logo from '../../images/logo/logo.svg';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../../store/slices/authSlice.js';
+
+// Validation schema using Yup
+const schema = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter a valid email address')
+    .required('Email is required'),
+  password: yup
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
 
 const SignIn = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    dispatch(loginUser(data, navigate));
+    // Handle form submission
+  };
   return (
     <>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -148,10 +180,10 @@ const SignIn = () => {
             <div className="w-full p-4 sm:p-12.5 xl:p-17.5">
               <span className="mb-1.5 block font-medium">Start for free</span>
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
-                Sign In to TailAdmin
+                Sign In to AdminGate
               </h2>
 
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email
@@ -159,6 +191,7 @@ const SignIn = () => {
                   <div className="relative">
                     <input
                       type="email"
+                      {...register('email')}
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -181,15 +214,37 @@ const SignIn = () => {
                       </svg>
                     </span>
                   </div>
+                  {errors.email && (
+                    <p
+                      className="text-red-500 text-sm mt-1"
+                      style={{ color: 'red' }}
+                    >
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mb-6">
-                  <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Re-type Password
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: "space-between" }}>
+                    <div>
+                      <label className="mb-2.5 block font-medium text-black dark:text-white">
+                        Password
+                      </label>
+                    </div>
+                    <div>
+                      <Link
+                        to="/auth/forgotpassword"
+                        className="text-primary"
+                        
+                      >
+                        Forgot Password?
+                      </Link>
+                    </div>
+                  </div>
                   <div className="relative">
                     <input
                       type="password"
+                      {...register('password')}
                       placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary"
                     />
@@ -216,17 +271,26 @@ const SignIn = () => {
                       </svg>
                     </span>
                   </div>
+                  {errors.password && (
+                    <p
+                      className="text-red-500 text-sm mt-1"
+                      style={{ color: 'red' }}
+                    >
+                      {errors.password.message}
+                    </p>
+                  )}
                 </div>
 
                 <div className="mb-5">
-                  <input
+                  <button
                     type="submit"
-                    value="Sign In"
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                  />
+                  >
+                    Sign In
+                  </button>
                 </div>
 
-                <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
+                {/* <button className="flex w-full items-center justify-center gap-3.5 rounded-lg border border-stroke bg-gray p-4 hover:bg-opacity-50 dark:border-strokedark dark:bg-meta-4 dark:hover:bg-opacity-50">
                   <span>
                     <svg
                       width="20"
@@ -261,7 +325,7 @@ const SignIn = () => {
                     </svg>
                   </span>
                   Sign in with Google
-                </button>
+                </button> */}
 
                 <div className="mt-6 text-center">
                   <p>

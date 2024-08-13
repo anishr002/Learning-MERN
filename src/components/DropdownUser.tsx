@@ -1,11 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import {ResetData} from "../store/slices/userSlice.js"
+import {resetLoginData} from "../store/slices/authSlice.js"
+
 
 import UserOne from '../images/user/user-01.png';
 
+import { useDispatch, useSelector } from 'react-redux';
+
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const UserData = useSelector((state : any) => state.auth.authData);
 
+
+  console.log(UserData, "UserData")
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
@@ -35,6 +46,14 @@ const DropdownUser = () => {
     return () => document.removeEventListener('keydown', keyHandler);
   });
 
+
+  const LogoutHandler = () =>{
+    dispatch(ResetData())
+    dispatch(resetLoginData())
+    navigate("/auth/signin")
+
+  }
+
   return (
     <div className="relative">
       <Link
@@ -45,9 +64,9 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Thomas Anree
+            {UserData?.user?.name}
           </span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="block text-xs">{UserData?.user?.role === "admin" ? "Admin" : "User"}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -109,8 +128,8 @@ const DropdownUser = () => {
             </Link>
           </li>
           <li>
-            <Link
-              to="#"
+            <button
+              onClick={LogoutHandler}
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <svg
@@ -126,10 +145,10 @@ const DropdownUser = () => {
                   fill=""
                 />
               </svg>
-              My Contacts
-            </Link>
+              Log Out
+            </button>
           </li>
-          <li>
+          {/* <li>
             <Link
               to="/settings"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
@@ -153,9 +172,9 @@ const DropdownUser = () => {
               </svg>
               Account Settings
             </Link>
-          </li>
+          </li> */}
         </ul>
-        <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        {/* <button className="flex items-center gap-3.5 py-4 px-6 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
           <svg
             className="fill-current"
             width="22"
@@ -174,7 +193,7 @@ const DropdownUser = () => {
             />
           </svg>
           Log Out
-        </button>
+        </button> */}
       </div>
       {/* <!-- Dropdown End --> */}
     </div>
